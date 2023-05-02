@@ -23,6 +23,15 @@ style.innerHTML = `@font-face {
 }`;
 document.head.appendChild(style);
 
+function removeSpacer() {
+  const spacer = document.querySelector(
+    "main .w-full.h-32.flex-shrink-0"
+  ) as HTMLDivElement | null;
+  if (spacer) {
+    spacer.style.display = "none";
+  }
+}
+
 function init() {
   const chatArea = document.querySelector(
     "main > div.flex-1.overflow-hidden"
@@ -77,6 +86,8 @@ function init() {
   `;
 
   function submitInput() {
+    removeSpacer();
+
     const value = editor.getValue();
     const textarea = document.querySelector(
       "main textarea"
@@ -100,7 +111,7 @@ function init() {
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, submitInput);
 
   editorElem.appendChild(submitButton);
-  
+
   main.appendChild(editorElem);
 
   editor.focus();
@@ -114,6 +125,8 @@ function init() {
     "main > div.absolute.bottom-0.left-0.w-full > form > div > div.flex.flex-col.w-full.py-2.flex-grow"
   )! as HTMLDivElement;
   textAreaWrapper.style.display = "none";
+
+  removeSpacer();
 
   try {
     let sizes: any = localStorage.getItem("split-sizes");
