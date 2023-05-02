@@ -74,7 +74,7 @@ const init = () => {
   );
 
   // prettier-ignore
-  const editor = monaco.editor.create(editorElem, {automaticLayout: true,fontSize: 16,language: "markdown",minimap: { enabled: false }});
+  const editor = monaco.editor.create(editorElem, {automaticLayout: true, fontSize: 14, language: "markdown", minimap: { enabled: false }});
 
   // @ts-ignore
   new MarkdownExtension().activate(editor);
@@ -118,7 +118,7 @@ const init = () => {
     localStorage.removeItem(LS_KEY);
   }
 
-  setTimeout(removeSpacer, 1000);
+  // setTimeout(removeSpacer, 1000);
 };
 
 createStyleElement();
