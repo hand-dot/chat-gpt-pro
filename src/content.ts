@@ -3,6 +3,16 @@ import { monaco } from "./editor";
 import { MarkdownExtension } from "./extensions";
 import codicon from "./codicon.ttf";
 
+const LS_KEY = "chat-gpt-pro:split-sizes";
+const SELECTOR = {
+  SPACER: "main .w-full.h-32.flex-shrink-0",
+  TEXTAREA: "main textarea",
+  TEXTAREA_WRAPPER:
+    "main > div.absolute.bottom-0.left-0.w-full > form > div > div.flex.flex-col.w-full.py-2.flex-grow",
+  THREAD_AREA: "main > div.flex-1.overflow-hidden",
+  FORM_WRAPPER: "main > div.absolute.bottom-0.left-0.w-full",
+};
+
 const createElem = (tag: string, css: string, attrs: any = {}) => {
   const el = document.createElement(tag);
   el.style.cssText = css;
@@ -25,7 +35,7 @@ const createStyleElement = () => {
 
 const removeSpacer = () => {
   const spacer = document.querySelector(
-    "main .w-full.h-32.flex-shrink-0"
+    SELECTOR.SPACER
   ) as HTMLDivElement | null;
   if (spacer) spacer.style.display = "none";
 };
@@ -34,27 +44,21 @@ const submitInput = (editor: monaco.editor.IStandaloneCodeEditor) => {
   removeSpacer();
   const value = editor.getValue();
   const textarea = document.querySelector(
-    "main textarea"
+    SELECTOR.TEXTAREA
   ) as HTMLTextAreaElement;
   if (!textarea) return;
   textarea.value = value;
-  const enterKeyEvent = new KeyboardEvent("keydown", {
-    key: "Enter",
-    code: "Enter",
-    keyCode: 13,
-    which: 13,
-    bubbles: true,
-    cancelable: true,
-  });
+  // prettier-ignore
+  const enterKeyEvent = new KeyboardEvent("keydown", {keyCode: 13, bubbles: true});
   textarea.dispatchEvent(enterKeyEvent);
   editor.setValue("");
 };
 
 const init = () => {
-  const chatArea = document.querySelector(
-    "main > div.flex-1.overflow-hidden"
+  const threadArea = document.querySelector(
+    SELECTOR.THREAD_AREA
   ) as HTMLDivElement;
-  if (!chatArea) return setTimeout(init, 1000);
+  if (!threadArea) return setTimeout(init, 1000);
 
   const main = document.getElementsByTagName("main")[0]!;
   main.classList.add("split");
@@ -68,12 +72,9 @@ const init = () => {
     `position: fixed; font-size: 13px; bottom: 14px; right: 40px; padding: 0.5rem; background-color: #1e88e5; border-radius: 4px;`,
     { innerText: "Submit (Ctrl/Cmd + Enter)" }
   );
-  const editor = monaco.editor.create(editorElem, {
-    automaticLayout: true,
-    fontSize: 16,
-    language: "markdown",
-    minimap: { enabled: false },
-  });
+
+  // prettier-ignore
+  const editor = monaco.editor.create(editorElem, {automaticLayout: true,fontSize: 16,language: "markdown",minimap: { enabled: false }});
 
   // @ts-ignore
   new MarkdownExtension().activate(editor);
@@ -89,45 +90,49 @@ const init = () => {
   editor.focus();
 
   const formWrapper = document.querySelector(
-    "main > div.absolute.bottom-0.left-0.w-full"
+    SELECTOR.FORM_WRAPPER
   ) as HTMLDivElement | null;
   if (formWrapper) formWrapper.style.cssText = `position: relative;`;
 
   const textAreaWrapper = document.querySelector(
-    "main > div.absolute.bottom-0.left-0.w-full > form > div > div.flex.flex-col.w-full.py-2.flex-grow"
+    SELECTOR.TEXTAREA_WRAPPER
   ) as HTMLDivElement | null;
   if (textAreaWrapper) textAreaWrapper.style.display = "none";
 
-  const sizesStr = localStorage.getItem("split-sizes");
-  const sizes: [number, number] = sizesStr ? JSON.parse(sizesStr) : [50, 50];
+  const sizesStr = localStorage.getItem(LS_KEY);
+  try {
+    Split([threadArea, editorElem], {
+      sizes: sizesStr ? JSON.parse(sizesStr) : [50, 50],
+      direction: "vertical",
+      minSize: 60,
+      onDragStart: () => {
+        if (formWrapper) formWrapper.style.cssText = `position: absolute;`;
+      },
+      onDragEnd: (sizes) => {
+        if (formWrapper) formWrapper.style.cssText = `position: relative;`;
+        localStorage.setItem(LS_KEY, JSON.stringify(sizes));
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    localStorage.removeItem(LS_KEY);
+  }
 
-  Split([chatArea, editorElem], {
-    sizes,
-    direction: "vertical",
-    minSize: 60,
-    onDragStart: () => {
-      if (formWrapper) formWrapper.style.cssText = `position: absolute;`;
-    },
-    onDragEnd: (sizes) => {
-      if (formWrapper) formWrapper.style.cssText = `position: relative;`;
-      localStorage.setItem("split-sizes", JSON.stringify(sizes));
-    },
-  });
-
-  removeSpacer();
+  setTimeout(removeSpacer, 1000);
 };
 
+createStyleElement();
+init();
+
+// Watch for changes in the DOM
 let href = location.href;
 const observer = new MutationObserver(() => {
   if (
     href !== location.href &&
-    document.getElementsByClassName("split").length === 0
+    document.getElementsByClassName("split").length === 0 // if split is not already initialized
   ) {
     href = location.href;
     init();
   }
 });
 observer.observe(document, { childList: true, subtree: true });
-
-createStyleElement();
-init();
