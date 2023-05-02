@@ -25,3 +25,4 @@ npm run dev
 ```
 npm run dev
 ```
+ref: https://crxjs.dev/vite-plugin/getting-started/vanilla-js/dev-basics
