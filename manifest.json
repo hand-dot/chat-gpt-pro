@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Chat GPT with Monaco Editor",
+  "version": "1.0.0",
+  "content_scripts": [
+    {
+      "matches": ["https://chat.openai.com/*"],
+      "js": ["src/content.ts"],
+      "run_at": "document_idle"
+    }
+  ]
+}
