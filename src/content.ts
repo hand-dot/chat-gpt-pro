@@ -67,7 +67,7 @@ function init() {
 
   const submitButton = document.createElement("button");
   submitButton.innerText = "Submit (Ctrl/Cmd + Enter)";
-  submitButton.style.cssText = `position: absolute;
+  submitButton.style.cssText = `position: fixed;
   font-size: 13px;
   bottom: 14px;
   right: 40px;
@@ -126,7 +126,7 @@ function init() {
     Split(["#split-0", "#split-1"], {
       sizes,
       direction: "vertical",
-      minSize: 50,
+      minSize: 60,
       onDragStart: function () {
         formWrapper.style.cssText = `position: absolute;`;
       },
