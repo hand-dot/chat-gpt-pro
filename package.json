@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "monaco-editor": "^0.37.1",
-    "monaco-markdown": "^0.0.12",
     "split.js": "^1.6.5"
   }
 }
