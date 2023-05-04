@@ -76,8 +76,9 @@ const init = () => {
   // prettier-ignore
   const editor = monaco.editor.create(editorElem, {automaticLayout: true, fontSize: 14, language: "markdown", minimap: { enabled: false }});
 
+  const markdownExtension = new MarkdownExtension();
   // @ts-ignore
-  new MarkdownExtension().activate(editor);
+  markdownExtension.activate(editor);
   monaco.editor.setTheme("vs-dark");
 
   submitButton.addEventListener("click", () => submitInput(editor));

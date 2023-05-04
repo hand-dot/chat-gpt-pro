@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Chat GPT Pro",
+  "name": "ChatGPT Pro",
   "version": "1.0.0",
   "content_scripts": [
     {
