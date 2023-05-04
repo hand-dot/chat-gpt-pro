@@ -17,9 +17,8 @@ Enjoy a comfortable ChatGPT input experience.
 ## Information for developers
 
 ### Build 
-*Ideally, I should run `tsc && vite build`, but due to an error, it is currently being executed in development mode with vite.
 ```
-npm run dev
+npm run build
 ```
 
 ### Develop

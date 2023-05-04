@@ -1,9 +1,9 @@
 import Split from "split.js";
 import { monaco } from "./editor";
-import { MonacoMarkdownExtension } from "./monaco-markdown";
+import { MarkdownExtension } from "./extensions";
 import codicon from "./codicon.ttf";
 
-const markdownExtension = new MonacoMarkdownExtension();
+const markdownExtension = new MarkdownExtension();
 
 const LS_KEY = "chat-gpt-pro:split-sizes";
 const SELECTOR = {
@@ -78,6 +78,7 @@ const init = () => {
   // prettier-ignore
   const editor = monaco.editor.create(editorElem, {automaticLayout: true, fontSize: 14, language: "markdown", minimap: { enabled: false }});
 
+  // @ts-ignore
   markdownExtension.activate(editor);
   monaco.editor.setTheme("vs-dark");
 
