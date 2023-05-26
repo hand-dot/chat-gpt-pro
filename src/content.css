@@ -1,0 +1,30 @@
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+    background-color: #8e8ea0;
+    cursor: row-resize;
+}
+
+.submit-button {
+    position: fixed;
+    font-size: 14px;
+    bottom: 14px;
+    right: 40px;
+    padding: 0.4rem;
+    background-color: #1e88e5;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+.chat-gpt-pro-editor {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    bottom: 0px;
+    background: #1e1e1e;
+}

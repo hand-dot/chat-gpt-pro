@@ -11,12 +11,20 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "file:crxjs-vite-plugin-2.0.0-beta.16.tgz",
     "@types/chrome": "^0.0.234",
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4",
+    "@vitejs/plugin-react": "^4.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
   },
   "dependencies": {
+    "@primer/octicons-react": "^19.1.0",
+    "@primer/react": "^35.25.1",
     "monaco-editor": "^0.37.1",
     "monaco-markdown": "^0.0.12",
-    "split.js": "^1.6.5"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "split.js": "^1.6.5",
+    "styled-components": "^5.3.11"
   }
 }
