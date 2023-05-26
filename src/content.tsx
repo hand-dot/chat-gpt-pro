@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from "react-dom/client";
 import Split from "split.js";
-import { ThemeProvider, BaseStyles, Box, Text, Button, IconButton, ActionMenu, ActionList, Textarea, TextInput } from '@primer/react'
+import { ThemeProvider, BaseStyles, Box, Text, IconButton, ActionMenu, ActionList, Textarea, TextInput } from '@primer/react'
 import { Dialog } from '@primer/react/drafts'
 import { PencilIcon, TrashIcon } from '@primer/octicons-react'
 import { monaco } from "./editor";
