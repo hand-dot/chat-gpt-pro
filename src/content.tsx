@@ -112,11 +112,13 @@ const Template = ({ editor }: { editor: monaco.editor.IStandaloneCodeEditor }) =
                     {i < 9 ? `${i + 1}. ` : "・ "}
                     {template.name}
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <IconButton style={{ marginRight: '0.25rem' }} aria-label="Edit" icon={PencilIcon} onClick={() => {
+                      <IconButton style={{ marginRight: '0.25rem' }} aria-label="Edit" icon={PencilIcon} onClick={(e) => {
+                        e.stopPropagation();
                         setNewTemplate(template)
                         openDialog()
                       }} />
-                      <IconButton aria-label="Remove" icon={TrashIcon} onClick={() => {
+                      <IconButton aria-label="Remove" icon={TrashIcon} onClick={(e) => {
+                        e.stopPropagation();
                         window.confirm("Are you sure you want to delete this template?") &&
                           chrome.storage.sync.set({ templates: templates.filter(t => t.name !== template.name) }, () => {
                             setTemplates(templates.filter(t => t.name !== template.name))
