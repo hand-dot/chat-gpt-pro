@@ -45,7 +45,10 @@ const Template = ({ editor }: { editor: monaco.editor.IStandaloneCodeEditor }) =
   }, [])
 
   const openDialog = React.useCallback(() => setIsOpen(true), [setIsOpen])
-  const closeDialog = React.useCallback(() => setIsOpen(false), [setIsOpen])
+  const closeDialog = React.useCallback(() => {
+    setIsOpen(false)
+    setNewTemplate({ name: "", content: "" })
+  }, [setIsOpen])
 
   return <ThemeProvider>
     <BaseStyles>
