@@ -24,7 +24,6 @@ const moveAndBreakEditorBottom = (editor: monaco.editor.IStandaloneCodeEditor) =
   editor.revealLine(lineCount);
 
   editor.setPosition({ lineNumber: lineCount, column: model.getLineMaxColumn(lineCount) });
-  editor.trigger('', 'type', { text: '\n' });
 
   setTimeout(() => {
     editor.focus();
