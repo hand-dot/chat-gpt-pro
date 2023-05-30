@@ -3,7 +3,10 @@
   "name": "ChatGPT Pro",
   "version": "1.0.5",
   "permissions": [
-    "storage"
+    "storage",
+    "notifications",
+    "webRequest",
+    "*://chat.openai.com/backend-api/conversation"
   ],
   "content_scripts": [
     {

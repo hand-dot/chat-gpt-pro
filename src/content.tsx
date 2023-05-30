@@ -193,6 +193,7 @@ const submitInput = (editor: monaco.editor.IStandaloneCodeEditor) => {
   const enterKeyEvent = new KeyboardEvent("keydown", { keyCode: 13, bubbles: true });
   textarea.dispatchEvent(enterKeyEvent);
   editor.setValue("");
+  chrome.runtime.sendMessage({ url: location.href });
 };
 
 const init = () => {
@@ -296,7 +297,6 @@ const init = () => {
   createStyleElement();
   init();
 
-  // Watch for changes in the DOM
   let href = location.href;
   const observer = new MutationObserver(() => {
     if (
@@ -308,5 +308,4 @@ const init = () => {
     }
   });
   observer.observe(document, { childList: true, subtree: true });
-
-})()
+})();
