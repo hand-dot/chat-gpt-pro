@@ -3,16 +3,8 @@
   "name": "ChatGPT Pro",
   "version": "1.0.5",
   "permissions": [
-    "storage",
-    "notifications"
+    "storage"
   ],
-  "host_permissions": [
-    "https://chat.openai.com/*"
-  ],
-  "background": {
-    "service_worker": "src/background.ts",
-    "type": "module"
-  },
   "content_scripts": [
     {
       "matches": [

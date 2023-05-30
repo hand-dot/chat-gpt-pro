@@ -9,24 +9,12 @@ import { MarkdownExtension } from "./extensions";
 import codicon from "./codicon.ttf";
 import "./content.css"
 
-const debounce = <F extends (...args: any[]) => any>(func: F, waitFor: number) => {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-  return (...args: Parameters<F>): Promise<ReturnType<F>> => {
-    return new Promise((resolve) => {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
-
-      timeoutId = setTimeout(() => resolve(func(...args)), waitFor);
-    });
-  };
-}
 
 interface Template {
   name: string;
   content: string;
 }
+
 
 const moveAndBreakEditorBottom = (editor: monaco.editor.IStandaloneCodeEditor) => {
   const model = editor.getModel();
@@ -155,9 +143,9 @@ const Template = ({ editor }: { editor: monaco.editor.IStandaloneCodeEditor }) =
   </ThemeProvider>
 }
 
+
 const markdownExtension = new MarkdownExtension();
 
-let gptResponding = false;
 const LS_KEY = "chat-gpt-pro:split-sizes";
 const SELECTOR = {
   SPACER: "main .w-full.h-32.flex-shrink-0",
@@ -205,14 +193,13 @@ const submitInput = (editor: monaco.editor.IStandaloneCodeEditor) => {
   const enterKeyEvent = new KeyboardEvent("keydown", { keyCode: 13, bubbles: true });
   textarea.dispatchEvent(enterKeyEvent);
   editor.setValue("");
-  gptResponding = true;
 };
 
-const initialize = () => {
+const init = () => {
   const threadArea = document.querySelector(
     SELECTOR.THREAD_AREA
   ) as HTMLDivElement;
-  if (!threadArea) return setTimeout(initialize, 1000);
+  if (!threadArea) return setTimeout(init, 1000);
 
   const main = document.getElementsByTagName("main")[0]!;
   main.classList.add("split");
@@ -221,6 +208,7 @@ const initialize = () => {
   const submitButton = createElem("button", { innerText: "Submit (Ctrl/Cmd + Enter)", className: "submit-button" });
 
 
+  // prettier-ignore
   const editor = monaco.editor.create(editorElem, { automaticLayout: true, fontSize: 14, language: "markdown", minimap: { enabled: false } });
 
   const keyCodes = [
@@ -304,8 +292,11 @@ const initialize = () => {
   return 0;
 };
 
+(() => {
+  createStyleElement();
+  init();
 
-const observePageMutations = () => {
+  // Watch for changes in the DOM
   let href = location.href;
   const observer = new MutationObserver(() => {
     if (
@@ -313,38 +304,9 @@ const observePageMutations = () => {
       document.getElementsByClassName("split").length === 0 // if split is not already initialized
     ) {
       href = location.href;
-      initialize();
-      observeChatAreaMutations();
+      init();
     }
   });
   observer.observe(document, { childList: true, subtree: true });
-}
 
-const observeChatAreaMutations = () => {
-  const threadArea = document.querySelector(
-    SELECTOR.THREAD_AREA
-  ) as HTMLDivElement;
-  if (!threadArea) return setTimeout(observeChatAreaMutations, 1000);
-
-  const observer = new MutationObserver(debounce(() => {
-    if (!gptResponding) return;
-    chrome.runtime.sendMessage({ url: location.href });
-    gptResponding = false;
-  }, 5000));
-  observer.observe(threadArea, { attributes: true, childList: true, subtree: true });
-}
-
-
-(() => {
-  // Initialize the webpage
-  createStyleElement();
-  initialize();
-
-  // Watch for page mutations and reinitialize if URL changes
-  observePageMutations();
-
-  // Observe chat area for mutations
-  observeChatAreaMutations();
-})();
-
-
+})()
