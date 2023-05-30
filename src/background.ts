@@ -38,6 +38,6 @@ chrome.webRequest.onCompleted.addListener(
             pendingUrl = "";
         });
     },
-    { urls: ["*://chat.openai.com/backend-api/conversation"] }
+    { urls: ["https://chat.openai.com/backend-api/conversation"] }
 );
 

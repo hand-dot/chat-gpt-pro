@@ -1,13 +1,20 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Pro",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "permissions": [
     "storage",
     "notifications",
     "webRequest",
-    "*://chat.openai.com/backend-api/conversation"
+    "*://chat.openai.com/*"
   ],
+  "host_permissions": [
+    "https://chat.openai.com/backend-api/conversation"
+  ],
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": [
