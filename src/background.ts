@@ -28,14 +28,17 @@ chrome.runtime.onMessage.addListener((request) => {
 
 chrome.webRequest.onCompleted.addListener(
     () => {
-        chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icon.png',
-            title: 'GPT has responded!',
-            message: 'Click to check the content.'
-        }, (notificationId) => {
-            myNotifications[notificationId] = pendingUrl;
-            pendingUrl = "";
+        chrome.storage.sync.get(['notification'], (result) => {
+            if (!result.notification) return;
+            chrome.notifications.create({
+                type: 'basic',
+                iconUrl: 'icon.png',
+                title: 'GPT has responded!',
+                message: 'Click to check the content.'
+            }, (notificationId) => {
+                myNotifications[notificationId] = pendingUrl;
+                pendingUrl = "";
+            });
         });
     },
     { urls: ["https://chat.openai.com/backend-api/conversation"] }

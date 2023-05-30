@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from "react-dom/client";
 import Split from "split.js";
-import { ThemeProvider, BaseStyles, Box, Text, IconButton, ActionMenu, ActionList, Textarea, TextInput } from '@primer/react'
+import { ThemeProvider, BaseStyles, Box, Text, IconButton, ActionMenu, ActionList, Textarea, TextInput, ToggleSwitch } from '@primer/react'
 import { Dialog } from '@primer/react/drafts'
 import { PencilIcon, TrashIcon } from '@primer/octicons-react'
 import { monaco } from "./editor";
@@ -50,97 +50,129 @@ const Template = ({ editor }: { editor: monaco.editor.IStandaloneCodeEditor }) =
     setNewTemplate({ name: "", content: "" })
   }, [setIsOpen])
 
-  return <ThemeProvider>
-    <BaseStyles>
-      {isOpen && (
-        <Dialog
-          title="Register a new template"
+  return <>{isOpen && (
+    <Dialog
+      title="Register a new template"
 
-          footerButtons={[{
-            content: 'OK', onClick: () => {
-              if (!newTemplate.name || !newTemplate.content) {
-                alert("Name and content are required.")
-                return
-              }
+      footerButtons={[{
+        content: 'OK', onClick: () => {
+          if (!newTemplate.name || !newTemplate.content) {
+            alert("Name and content are required.")
+            return
+          }
 
-              const newTemplateIndex = templates.findIndex(t => t.name === newTemplate.name)
-              const updatedTemplates = newTemplateIndex !== -1
-                ? [...templates.slice(0, newTemplateIndex), newTemplate, ...templates.slice(newTemplateIndex + 1)]
-                : [...templates, newTemplate];
+          const newTemplateIndex = templates.findIndex(t => t.name === newTemplate.name)
+          const updatedTemplates = newTemplateIndex !== -1
+            ? [...templates.slice(0, newTemplateIndex), newTemplate, ...templates.slice(newTemplateIndex + 1)]
+            : [...templates, newTemplate];
 
-              chrome.storage.sync.set({ templates: updatedTemplates }, () => {
-                setTemplates(updatedTemplates)
-                setNewTemplate({ name: "", content: "" })
-                closeDialog()
-              });
-            }
+          chrome.storage.sync.set({ templates: updatedTemplates }, () => {
+            setTemplates(updatedTemplates)
+            setNewTemplate({ name: "", content: "" })
+            closeDialog()
+          });
+        }
 
-          }]}
-          onClose={closeDialog}
-        >
-          <Box>
-            <Text as="label" display="flex" mb={2} htmlFor="name">
-              Name
-            </Text>
-            <TextInput id="name" block name="name" value={newTemplate.name}
-              onChange={
-                (e) => setNewTemplate({ ...newTemplate, name: e.target.value })
-              } />
-          </Box>
+      }]}
+      onClose={closeDialog}
+    >
+      <Box>
+        <Text as="label" display="flex" mb={2} htmlFor="name">
+          Name
+        </Text>
+        <TextInput id="name" block name="name" value={newTemplate.name}
+          onChange={
+            (e) => setNewTemplate({ ...newTemplate, name: e.target.value })
+          } />
+      </Box>
 
-          <Box mt={4}>
-            <Text as="label" display="flex" mb={2} htmlFor="content">
-              Content
-            </Text>
-            <Textarea id="content" block name="content" value={newTemplate.content} onChange={
-              (e) => setNewTemplate({ ...newTemplate, content: e.target.value })
-            } />
-          </Box>
-        </Dialog>
-      )}
+      <Box mt={4}>
+        <Text as="label" display="flex" mb={2} htmlFor="content">
+          Content
+        </Text>
+        <Textarea id="content" block name="content" value={newTemplate.content} onChange={
+          (e) => setNewTemplate({ ...newTemplate, content: e.target.value })
+        } />
+      </Box>
+    </Dialog>
+  )}
 
-      <div style={{ position: "fixed", bottom: 14, right: 240, }} >
-        <ActionMenu>
-          <ActionMenu.Button title='The template can be accessed using the ⌘+⌥+{1~9} shortcuts.'>Template</ActionMenu.Button>
+    <div style={{ position: "fixed", bottom: 14, right: 240, }} >
+      <ActionMenu>
+        <ActionMenu.Button title='The template can be accessed using the ⌘+⌥+{1~9} shortcuts.'>Template</ActionMenu.Button>
 
-          <ActionMenu.Overlay>
-            <ActionList style={{ width: 310 }}>
+        <ActionMenu.Overlay>
+          <ActionList style={{ width: 310 }}>
 
-              {templates.map((template, i) => (
-                <ActionList.Item key={template.name} onSelect={() => {
-                  editor.setValue(template.content)
-                  moveAndBreakEditorBottom(editor)
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    {i < 9 ? `${i + 1}. ` : "・ "}
-                    {template.name}
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <IconButton style={{ marginRight: '0.25rem' }} aria-label="Edit" icon={PencilIcon} onClick={(e) => {
-                        e.stopPropagation();
-                        setNewTemplate(template)
-                        openDialog()
-                      }} />
-                      <IconButton aria-label="Remove" icon={TrashIcon} onClick={(e) => {
-                        e.stopPropagation();
-                        window.confirm("Are you sure you want to delete this template?") &&
-                          chrome.storage.sync.set({ templates: templates.filter(t => t.name !== template.name) }, () => {
-                            setTemplates(templates.filter(t => t.name !== template.name))
-                          });
-                      }} />
-                    </div>
-
+            {templates.map((template, i) => (
+              <ActionList.Item key={template.name} onSelect={() => {
+                editor.setValue(template.content)
+                moveAndBreakEditorBottom(editor)
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  {i < 9 ? `${i + 1}. ` : "・ "}
+                  {template.name}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <IconButton style={{ marginRight: '0.25rem' }} aria-label="Edit" icon={PencilIcon} onClick={(e) => {
+                      e.stopPropagation();
+                      setNewTemplate(template)
+                      openDialog()
+                    }} />
+                    <IconButton aria-label="Remove" icon={TrashIcon} onClick={(e) => {
+                      e.stopPropagation();
+                      window.confirm("Are you sure you want to delete this template?") &&
+                        chrome.storage.sync.set({ templates: templates.filter(t => t.name !== template.name) }, () => {
+                          setTemplates(templates.filter(t => t.name !== template.name))
+                        });
+                    }} />
                   </div>
-                </ActionList.Item>
-              ))}
-              {templates.length === 0 && <ActionList.Item disabled>No template.</ActionList.Item>}
-              <ActionList.Divider />
-              <ActionList.Item onSelect={openDialog}>New template.</ActionList.Item>
-            </ActionList>
-          </ActionMenu.Overlay>
-        </ActionMenu>
-      </div>
-    </BaseStyles>
-  </ThemeProvider>
+
+                </div>
+              </ActionList.Item>
+            ))}
+            {templates.length === 0 && <ActionList.Item disabled>No template.</ActionList.Item>}
+            <ActionList.Divider />
+            <ActionList.Item onSelect={openDialog}>New template.</ActionList.Item>
+          </ActionList>
+        </ActionMenu.Overlay>
+      </ActionMenu>
+    </div>
+  </>
+}
+
+const Notifications = () => {
+  const [isOn, setIsOn] = React.useState(true)
+
+  useEffect(() => {
+    chrome.storage.sync.get(['notification'], (result) => {
+      setIsOn(Boolean(result.notification))
+    });
+  }, [])
+
+  const onClick = () => {
+    const newValue = !isOn
+    setIsOn(newValue)
+    chrome.storage.sync.set({ notification: newValue });
+
+  }
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '13px',
+      right: '370px',
+      background: 'white',
+      padding: '0.25rem',
+      borderRadius: '5px'
+    }} >
+      <Box display="flex" alignItems={"center"}>
+        <Box flexGrow={0} fontSize={1} id="switchLabel">
+          <p style={{ marginBottom: 3 }}>Notifications:</p>
+        </Box>
+        <ToggleSwitch size={"small"} onClick={onClick} checked={isOn} aria-labelledby="switchLabel" />
+      </Box>
+    </div>
+  )
 }
 
 
@@ -251,7 +283,12 @@ const init = () => {
 
   ReactDOM.createRoot(templateButton).render(
     <React.StrictMode>
-      <Template editor={editor} />
+      <ThemeProvider>
+        <BaseStyles>
+          <Template editor={editor} />
+          <Notifications />
+        </BaseStyles>
+      </ThemeProvider>
     </React.StrictMode>
   );
 
