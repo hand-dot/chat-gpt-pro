@@ -331,7 +331,7 @@ const observeChatAreaMutations = () => {
     chrome.runtime.sendMessage({ url: location.href });
     gptResponding = false;
   }, 5000));
-  observer.observe(threadArea, {  childList: true, subtree: true });
+  observer.observe(threadArea, { attributes: true, childList: true, subtree: true });
 }
 
 
