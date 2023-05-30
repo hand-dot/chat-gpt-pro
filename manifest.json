@@ -3,6 +3,7 @@
   "name": "ChatGPT Pro",
   "version": "1.0.6",
   "permissions": [
+    "activeTab",
     "storage",
     "notifications",
     "webRequest",
