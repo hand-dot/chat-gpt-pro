@@ -9,6 +9,14 @@ import { MarkdownExtension } from "./extensions";
 import codicon from "./codicon.ttf";
 import "./content.css"
 
+const SELECTOR = {
+  SPACER: "main .w-full.h-32.flex-shrink-0",
+  TEXTAREA: "main textarea",
+  TEXTAREA_WRAPPER:
+    "main > div.absolute.bottom-0.left-0.w-full > form > div > div",
+  THREAD_AREA: "main > div.flex-1.overflow-hidden",
+  FORM_WRAPPER: "main > div.absolute.bottom-0.left-0.w-full",
+};
 
 interface Template {
   name: string;
@@ -178,15 +186,6 @@ const Notifications = () => {
 
 const markdownExtension = new MarkdownExtension();
 
-const LS_KEY = "chat-gpt-pro:split-sizes";
-const SELECTOR = {
-  SPACER: "main .w-full.h-32.flex-shrink-0",
-  TEXTAREA: "main textarea",
-  TEXTAREA_WRAPPER:
-    "main > div.absolute.bottom-0.left-0.w-full > form > div > div.flex.flex-col.w-full.py-2.flex-grow",
-  THREAD_AREA: "main > div.flex-1.overflow-hidden",
-  FORM_WRAPPER: "main > div.absolute.bottom-0.left-0.w-full",
-};
 
 const createElem = (tag: string, attrs: any = {}) => {
   const el = document.createElement(tag);
@@ -220,8 +219,10 @@ const submitInput = (editor: monaco.editor.IStandaloneCodeEditor) => {
     SELECTOR.TEXTAREA
   ) as HTMLTextAreaElement;
   if (!textarea) return;
+  const inputEvent = new Event('input', { bubbles: true, cancelable: true });
   textarea.value = value;
-  // prettier-ignore
+  textarea.dispatchEvent(inputEvent);
+
   const enterKeyEvent = new KeyboardEvent("keydown", { keyCode: 13, bubbles: true });
   textarea.dispatchEvent(enterKeyEvent);
   editor.setValue("");
@@ -307,7 +308,8 @@ const init = () => {
   ) as HTMLDivElement | null;
   if (textAreaWrapper) textAreaWrapper.style.display = "none";
 
-  const sizesStr = localStorage.getItem(LS_KEY);
+  const localStorageKey = "chat-gpt-pro:split-sizes";
+  const sizesStr = localStorage.getItem(localStorageKey);
   try {
     Split([threadArea, editorElem], {
       sizes: sizesStr ? JSON.parse(sizesStr) : [50, 50],
@@ -318,12 +320,12 @@ const init = () => {
       },
       onDragEnd: (sizes) => {
         if (formWrapper) formWrapper.style.cssText = `position: relative;`;
-        localStorage.setItem(LS_KEY, JSON.stringify(sizes));
+        localStorage.setItem(localStorageKey, JSON.stringify(sizes));
       },
     });
   } catch (e) {
     console.error(e);
-    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(localStorageKey);
   }
 
   setTimeout(removeSpacer, 1000);
